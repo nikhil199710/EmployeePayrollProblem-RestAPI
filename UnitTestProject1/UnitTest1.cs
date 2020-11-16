@@ -1,4 +1,5 @@
 using EmployeePayroll_RestApi;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using RestSharp;
@@ -59,6 +60,32 @@ namespace UnitTest
             {
                 Console.WriteLine("id: " + employee.id + " name : " + employee.name + "  salary :" + employee.salary);
             }
+        }
+
+        /// <summary>
+        /// On Calling Post API Should Return Employee Object
+        /// UC2
+        /// </summary>
+        [TestMethod]
+        public void OnCalling_PostAPI_ShouldReturnEmployeeObject()
+        {
+            ///creating request for post method
+            RestRequest request = new RestRequest("/Employees", Method.POST);
+            ///new json object for adding employees
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.Add("id", 5);
+            jsonObject.Add("name", "jone");
+            jsonObject.Add("salary", "60000");
+            ///passing application type req , json object ,type of parameters info
+            request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+            ///executing req and storing in response
+            IRestResponse response = client.Execute(request);
+            ///checking if httpstatus is same
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            ///deserialising response and  checking name,id
+            EmployeeDetails employee = JsonConvert.DeserializeObject<EmployeeDetails>(response.Content);
+            Assert.AreEqual("jone", employee.name);
+            Assert.AreEqual(5, employee.id);
         }
     }
 }
