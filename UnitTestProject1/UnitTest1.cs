@@ -119,5 +119,21 @@ namespace UnitTest
                 Assert.AreEqual(employeedata.id, employee.id);
             });
         }
+
+        [TestMethod]
+        public void OnCalling_UpdateAPI_ShouldUpdateEmployee()
+        {
+            RestRequest request = new RestRequest("/Employees/6", Method.PUT);
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.Add("name", "deny");
+            jsonObject.Add("salary", "56000");
+            request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+            ///checking if httpstatus is same
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            EmployeeDetails employee = JsonConvert.DeserializeObject<EmployeeDetails>(response.Content);
+            Assert.AreEqual("deny", employee.name);
+            Assert.AreEqual(6, employee.id);
+        }
     }
 }
