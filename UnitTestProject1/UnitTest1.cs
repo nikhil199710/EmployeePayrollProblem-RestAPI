@@ -120,20 +120,43 @@ namespace UnitTest
             });
         }
 
+        /// <summary>
+        /// On Calling Update API Should Update Employee
+        /// UC4
+        /// </summary>
         [TestMethod]
         public void OnCalling_UpdateAPI_ShouldUpdateEmployee()
         {
+            ///creating request for put method
             RestRequest request = new RestRequest("/Employees/6", Method.PUT);
+            ///new json object for updating employees
             JsonObject jsonObject = new JsonObject();
             jsonObject.Add("name", "deny");
             jsonObject.Add("salary", "56000");
             request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+            ///executing request and storing in response
             IRestResponse response = client.Execute(request);
             ///checking if httpstatus is same
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            ///deserialising response and  checking name,id
             EmployeeDetails employee = JsonConvert.DeserializeObject<EmployeeDetails>(response.Content);
             Assert.AreEqual("deny", employee.name);
             Assert.AreEqual(6, employee.id);
+        }
+
+        /// <summary>
+        /// On Calling Delete API Should Delete Contact
+        /// UC5
+        /// </summary>
+        [TestMethod]
+        public void OnCalling_DeleteAPI_ShouldDeleteContact()
+        {
+            ///creating request for Delete method
+            RestRequest request = new RestRequest("/Employees/5", Method.DELETE);
+            ///executing request and storing in response
+            IRestResponse response = client.Execute(request);
+            ///checking if httpstatus is same
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }
