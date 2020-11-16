@@ -87,5 +87,37 @@ namespace UnitTest
             Assert.AreEqual("jone", employee.name);
             Assert.AreEqual(5, employee.id);
         }
+
+        /// <summary>
+        ///  On Adding MultipleEmployees Calling PostAPI Should Return EmployeeObject
+        ///  Uc3
+        /// </summary>
+        [TestMethod]
+        public void OnAddingMultipleEmployees_CallingPostAPI_ShouldReturnEmployeeObject()
+        {
+            List<EmployeeDetails> multipleEmployeeList = new List<EmployeeDetails>();
+            multipleEmployeeList.Add(new EmployeeDetails { id = 6, name = "apsy", salary = "500000" });
+            multipleEmployeeList.Add(new EmployeeDetails { id = 7, name = "gen", salary = "300000" });
+            multipleEmployeeList.ForEach(employeedata =>
+            {
+                ///creating request for post method
+                RestRequest request = new RestRequest("/Employees", Method.POST);
+                ///new json object for adding employees
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.Add("id", employeedata.id);
+                jsonObject.Add("name", employeedata.name);
+                jsonObject.Add("salary", employeedata.salary);
+                ///passing application type req , json object ,type of parameters info
+                request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+                ///executing req and storing in response
+                IRestResponse response = client.Execute(request);
+                ///checking if httpstatus is same
+                Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+                ///deserialising response and  checking name,id
+                EmployeeDetails employee = JsonConvert.DeserializeObject<EmployeeDetails>(response.Content);
+                Assert.AreEqual(employeedata.name, employee.name);
+                Assert.AreEqual(employeedata.id, employee.id);
+            });
+        }
     }
 }
